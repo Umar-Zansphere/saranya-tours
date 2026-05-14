@@ -1,26 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@config "../tailwind.config.js";
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-ivory: #fffdf8;
+  --bg-soft: #f7f2e7;
+  --navy: #0b1f3a;
+  --gold: #c89b3c;
+  --gold-rich: #d7ad57;
+  --gold-deep: #9f7420;
+  --text: #253043;
+  --muted: #5f6c80;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(215, 173, 87, 0.16), transparent 28%),
+    radial-gradient(circle at top right, rgba(11, 31, 58, 0.06), transparent 22%),
+    linear-gradient(180deg, var(--bg-ivory) 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  font-family: 'Manrope', system-ui, sans-serif;
+  line-height: 1.58;
+  letter-spacing: 0.01em;
+  overflow-x: hidden;
+}
+
+a { color: inherit; }
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+::selection {
+  background: rgba(200, 155, 60, 0.22);
+  color: var(--navy);
+}
+
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.eyebrow {
+  color: var(--gold-deep);
+  font-size: clamp(0.82rem, 0.95vw, 0.95rem);
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.3rem, 4vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+
+.section-copy {
+  color: var(--muted);
+  font-size: clamp(0.99rem, 1.4vw, 1.08rem);
+  line-height: 1.75;
+}
+
+.section-divider {
+  width: 4.75rem;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-rich));
+  box-shadow: 0 0 24px rgba(200, 155, 60, 0.26);
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(200, 155, 60, 0.24);
+  box-shadow: 0 24px 60px rgba(11, 31, 58, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.gold-button {
+  background: linear-gradient(135deg, var(--gold-rich), var(--gold-deep));
+  box-shadow: 0 18px 38px rgba(159, 116, 32, 0.28);
+}
+
+.gold-outline {
+  border: 1px solid rgba(200, 155, 60, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.swiper-pagination-bullet {
+  background: rgba(255,255,255,0.55) !important;
+  width: 8px !important; height: 8px !important;
+  opacity: 1 !important; transition: all 0.3s ease !important;
+}
+.swiper-pagination-bullet-active {
+  background: linear-gradient(90deg, #D7AD57, #9F7420) !important;
+  width: 34px !important; border-radius: 999px !important;
+  box-shadow: 0 0 18px rgba(200, 155, 60, 0.35) !important;
+}
+.hero-swiper { width: 100%; height: 100vh; min-height: 760px; }
+.dest-card:hover .dest-img { transform: scale(1.09); }
+.service-card { transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease, background-color 0.35s ease; }
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px rgba(11,31,58,0.12);
+  border-color: rgba(200, 155, 60, 0.34);
+  background-color: rgba(255, 252, 245, 0.98);
+}
+
+@keyframes waSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.wa-modal-enter { animation: waSlideUp 0.3s ease forwards; }
+
+@keyframes waPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(37,211,102,0); }
+}
+.wa-pulse { animation: waPulse 2.5s ease infinite; }
+
+.stat-item:not(:last-child)::after {
+  content: ''; position: absolute; right: 0; top: 20%;
+  height: 60%; width: 1px; background: rgba(255,255,255,0.15);
+}
+.stat-item { position: relative; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0B1F3A, #C89B3C);
+  border-radius: 999px;
 }
