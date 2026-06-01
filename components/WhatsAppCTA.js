@@ -40,33 +40,43 @@ function WhatsAppIcon({ className = "" }) {
 
 export default function WhatsAppCTA() {
   const [isOpen, setIsOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [selectedQuick, setSelectedQuick] = useState(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    if (!isOpen) {
-      return undefined;
-    }
-
+    if (!isOpen) return;
     function handlePointerDown(event) {
       if (containerRef.current && !containerRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     }
-
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         setIsOpen(false);
       }
     }
-
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
+
+  function handleSend() {
+    const message = input.trim() || (selectedQuick && selectedQuick.message);
+    if (!message) return;
+    window.open(buildWhatsAppLink(message), "_blank", "noopener,noreferrer");
+    setInput("");
+    setSelectedQuick(null);
+    setIsOpen(false);
+  }
+
+  function handleQuickMessage(item) {
+    setSelectedQuick(item);
+    setInput(item.message);
+  }
 
   return (
     <div
@@ -81,83 +91,111 @@ export default function WhatsAppCTA() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="wa-modal-enter w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-[1.75rem] border border-[#25D366]/20 bg-white shadow-[0_28px_70px_rgba(11,31,58,0.18)]"
+            className="w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-[#e5e5e5] bg-[#f7f7f7] shadow-xl"
             id="whatsapp-quick-chat"
             role="dialog"
             aria-label="WhatsApp quick chat"
+            style={{ boxShadow: "0 8px 32px rgba(11,31,58,0.13)" }}
           >
-            <div className="bg-[#25D366] px-5 py-4 text-white">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white/80">
-                    WhatsApp
-                  </p>
-                  <h3 className="mt-1 text-lg font-semibold leading-tight">
-                    Start a quick chat
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-full bg-white/16 p-2 text-white transition hover:bg-white/24"
-                  aria-label="Close WhatsApp chat"
-                >
-                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+            {/* Header */}
+            <div className="flex items-center gap-3 bg-[#075e54] px-4 py-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#25D366]">
+                <WhatsAppIcon className="h-5 w-5" />
+              </span>
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-white">Saranya Tours</div>
+                <div className="text-xs text-[#d0f8ce]">Typically replies instantly</div>
               </div>
-              <p className="mt-2 max-w-[24ch] text-sm leading-6 text-white/90">
-                Choose a topic and we&apos;ll open WhatsApp with your message ready to send.
-              </p>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="rounded-full p-1 text-white/80 hover:bg-white/10"
+                aria-label="Close WhatsApp chat"
+              >
+                <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
-            <div className="space-y-3 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(247,242,231,0.86))] px-4 py-4">
+            {/* Chat body */}
+            <div className="flex flex-col gap-2 px-4 py-3 min-h-[120px] bg-[#ece5dd]">
+              {/* Welcome message */}
+              <div className="self-start max-w-[80%] rounded-xl rounded-bl-sm bg-white px-3 py-2 text-sm shadow-sm">
+                Hi 👋<br />How can we help you today?
+              </div>
+              {/* If quick message selected, show as user bubble */}
+              {selectedQuick && (
+                <div className="self-end max-w-[80%] rounded-xl rounded-br-sm bg-[#dcf8c6] px-3 py-2 text-sm shadow-sm">
+                  {selectedQuick.message}
+                </div>
+              )}
+            </div>
+
+            {/* Quick replies */}
+            <div className="flex flex-wrap gap-2 px-4 pb-2 pt-1 bg-[#ece5dd]">
               {QUICK_MESSAGES.map((item) => (
-                <a
+                <button
                   key={item.id}
-                  href={buildWhatsAppLink(item.message)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block rounded-[1.2rem] border border-[#25D366]/15 bg-white px-4 py-3 shadow-[0_12px_30px_rgba(11,31,58,0.08)] transition duration-200 hover:-translate-y-0.5 hover:border-[#25D366]/40"
+                  type="button"
+                  onClick={() => handleQuickMessage(item)}
+                  className="rounded-full border border-[#25D366]/30 bg-white px-3 py-1 text-xs font-medium text-[#075e54] shadow-sm transition hover:bg-[#e9f9ee] focus:outline-none"
+                  style={{ opacity: selectedQuick && selectedQuick.id === item.id ? 0.7 : 1 }}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-[#0b1f3a]">{item.label}</p>
-                      <p className="mt-1 text-xs leading-5 text-[#5f6c80]">
-                        Tap to continue this conversation on WhatsApp.
-                      </p>
-                    </div>
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#25D366]/12 text-[#25D366]">
-                      <WhatsAppIcon className="h-5 w-5" />
-                    </div>
-                  </div>
-                </a>
+                  {item.label}
+                </button>
               ))}
             </div>
+
+            {/* Input area */}
+            <form
+              className="flex items-center gap-2 px-4 py-3 bg-[#f7f7f7] border-t border-[#e5e5e5]"
+              onSubmit={e => { e.preventDefault(); handleSend(); }}
+            >
+              <input
+                type="text"
+                className="flex-1 rounded-full border border-[#e5e5e5] bg-white px-3 py-2 text-sm outline-none focus:border-[#25D366] transition"
+                placeholder="Type your message..."
+                value={input}
+                onChange={e => { setInput(e.target.value); setSelectedQuick(null); }}
+                aria-label="Type your message"
+              />
+              <button
+                type="submit"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition hover:bg-[#128c7e] disabled:opacity-50"
+                aria-label="Send message on WhatsApp"
+                disabled={!input.trim() && !selectedQuick}
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </button>
+            </form>
           </motion.div>
         ) : null}
       </AnimatePresence>
 
+      {/* Floating button */}
       <motion.button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        whileHover={{ y: -2, scale: 1.02 }}
-        whileTap={{ scale: 0.96 }}
-        className="wa-pulse flex items-center gap-3 rounded-full bg-[#25D366] px-4 py-3 text-left text-white shadow-[0_20px_45px_rgba(37,211,102,0.3)]"
+        whileHover={{ y: -2, scale: 1.04 }}
+        whileTap={{ scale: 0.97 }}
+        className="wa-pulse flex items-center gap-2 rounded-full bg-[#075e54] px-6 py-3 text-left text-white shadow-lg"
         aria-expanded={isOpen}
         aria-controls="whatsapp-quick-chat"
         aria-label={isOpen ? "Close WhatsApp chat options" : "Open WhatsApp chat options"}
+        style={{ minWidth: 0 }}
       >
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#25D366]">
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#25D366]">
           <WhatsAppIcon className="h-6 w-6" />
         </span>
-        <span className="hidden pr-1 sm:block">
+        <span className="hidden sm:block">
           <span className="block text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/75">
             WhatsApp
           </span>
           <span className="block text-sm font-semibold leading-tight">
-            Chat with us
+            Chat
           </span>
         </span>
       </motion.button>

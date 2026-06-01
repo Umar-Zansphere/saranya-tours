@@ -72,7 +72,7 @@ const fadeUp = (delay = 0) => ({
 
 export default function HeroSection() {
   const swiperRef = useRef(null);
-  const heroMinHeight = "max(760px, calc(100vh - 82px))";
+  const heroMinHeight = "max(700px, calc(100vh - 82px))";
 
   useEffect(() => {
     let swiperInstance = null;
@@ -112,7 +112,7 @@ export default function HeroSection() {
       style={{ minHeight: heroMinHeight }}
     >
       {/* Swiper carousel */}
-      <div ref={swiperRef} className="swiper hero-swiper absolute inset-0 z-10 h-full w-full">
+      <div ref={swiperRef} className="swiper hero-swiper absolute inset-0 z-10  w-full">
         <div className="swiper-wrapper h-full">
           {SLIDES.map((slide, i) => (
             <div key={i} className="swiper-slide relative h-full overflow-hidden">
@@ -141,7 +141,7 @@ export default function HeroSection() {
 
       {/* Hero Content */}
       <div className="absolute inset-0 z-30 flex items-center">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:px-16 pt-6 pb-14 md:pt-20 md:pb-20">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:px-16 pt-2 pb-14  md:pb-20">
           <div className="max-w-[700px]">
 
             {/* Label */}
